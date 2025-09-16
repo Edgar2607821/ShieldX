@@ -1,28 +1,81 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from bson import ObjectId
 
+class TargetModel(BaseModel):
+    alias: Optional[str] = None
+    bucket_id: Optional[str] = None
+    key: Optional[str] = None
+    method: Optional[str] = None
+
+    @field_validator("alias", mode="before")
+    def accept_legacy_string(cls, v, values):
+        """
+        Permitir que target venga como string (legacy) y lo convierta a TargetModel.
+        """
+        if isinstance(v, str):
+            # devolvemos un dict compatible
+            return v  
+        return v
+
+    @model_validator(mode="before")
+    def legacy_as_alias(cls, values):
+        """
+        Si todo el objeto es un string, convertirlo a alias.
+        """
+        if isinstance(values, str):
+            return {"alias": values}
+        return values
+
+    @model_validator(mode="after")
+    def validate_target(self) -> "TargetModel":
+        if not self.alias and not (self.bucket_id and self.key):
+            raise ValueError("Se requiere 'alias' o ('bucket_id' + 'key')")
+        return self
+    
 class ParameterDetailModel(BaseModel):
     """
-    Modelo que representa los detalles de un parámetro requerido por una función asociada a una regla.
+    Modelo que representa un parámetro dentro de una Regla.
 
-    Atributos:
-    - type_: Tipo de dato del parámetro (ej. "string", "int", "float", "bool").
-    - description: Descripción textual del propósito del parámetro.
+    Puede ser:
+        - un literal directo (int, str, bool, etc.)
+        - o un objeto con información enriquecida (ref/$ref, type, name, description, value)
     """
-
-    type_: str = Field(..., alias="type")
-    description: str
+    ref: Optional[str] = None
+    ref_dollar: Optional[str] = Field(default=None, alias="$ref")
+    value: Optional[Any] = None
+    type_: Optional[str] = Field(default=None, alias="type")
+    name: Optional[str] = None
+    description: Optional[str] = None
 
     model_config = {
         "populate_by_name": True,
         "from_attributes": True,
-        "json_schema_extra": {
-            "examples": [
-                {"type": "string", "description": "ID del bucket origen"}
-            ]
-        }
     }
+    @model_validator(mode="before")
+    def accept_literal(cls, v):
+        if isinstance(v, dict):
+            return v
+        if isinstance(v, (str, int, float, bool, list)):
+            return {"value": v}
+        return v
+
+    
+    @model_validator(mode="after")
+    def validate_ref_or_value(self) -> "ParameterDetailModel":
+        # Aceptar ref/$ref/value
+        if self.ref or self.ref_dollar or self.value is not None:
+            return self
+        # Compatibilidad con legacy: type + description
+        if self.type_ and self.description:
+            return self
+        raise ValueError("El parámetro debe tener 'ref'/'$ref' o un 'value'.")
+
+class ParametersBlock(BaseModel):
+    init: Dict[str, ParameterDetailModel] = Field(default_factory=dict)
+    call: Dict[str, ParameterDetailModel] = Field(default_factory=dict)
+
+    model_config = {"populate_by_name": True, "from_attributes": True}
 
 class RuleModel(BaseModel):
     """
@@ -39,53 +92,38 @@ class RuleModel(BaseModel):
     """
 
     rule_id: Optional[str] = Field(default=None, alias="_id")
-    target: str  
-    parameters: Dict[str, ParameterDetailModel]
+    target: TargetModel
+    parameters: ParametersBlock
 
     @field_validator("rule_id", mode="before")
     def convert_object_id(cls, v):
-        """
-        Convierte un ObjectId de MongoDB en cadena de texto.
-
-        :param v: Valor del campo `_id` recibido desde la base de datos.
-        :return: Representación en string del ObjectId.
-        """
         if isinstance(v, ObjectId):
             return str(v)
         return v
 
     @model_validator(mode="after")
     def validate_required_parameters(self) -> "RuleModel":
+        # Ejemplo: validaciones según alias
         """
-        Valida que la regla tenga los parámetros obligatorios para el target indicado
-        y que cada parámetro tenga un tipo válido.
-
-        :return: Instancia validada de RuleModel.
-        :raises ValueError: Si faltan parámetros requeridos o si el tipo no es válido.
+        Validación flexible: solo asegura que los parámetros tengan tipos válidos
+        y que respeten el esquema de ParameterDetailModel.
+        Ya no fuerza parámetros obligatorios por alias.
         """
-        required_by_target = {
-            "s_security.cipher_ops.encrypt_data": [
-                "source_bucket_id", "source_key", "sink_bucket_id", "sink_key", "security_level"
-            ],
-            "s_ml.ml_clustering.skmean": ["source_bucket_id", "source_key", "k"],
-            "mictlanx.put": ["bucket_id", "key", "source_path", "replication_factor", "num_chunks"],
-            "mictlanx.get": ["bucket_id", "key", "sink_path"]
-        }
-
-        expected = required_by_target.get(self.target)
-        if expected:
-            missing = [param for param in expected if param not in self.parameters]
-            if missing:
-                raise ValueError(f"El target '{self.target}' requiere los siguientes parámetros: {missing}")
-
-        valid_types = {"string", "int", "float", "bool"}
-        for key, param in self.parameters.items():
-            if param.type_ not in valid_types:
-                raise ValueError(f"Parámetro '{key}' tiene un tipo no válido: '{param.type_}'")
-
+        for block in [self.parameters.init, self.parameters.call]:
+            for key, param in block.items():
+                # Solo validamos que sea un ParameterDetailModel válido
+                if not isinstance(param, ParameterDetailModel):
+                    raise ValueError(f"Parámetro '{key}' no es válido")
         return self
-
-    model_config = {
-        "populate_by_name": True,
-        "json_encoders": {ObjectId: str}
-    }
+    
+    def dump(self) -> dict:
+        """
+        Exporta el modelo en formato dict, eliminando todos los campos None
+        en todos los niveles, listo para persistir en Mongo.
+        """
+        return self.model_dump(
+            by_alias=True,
+            exclude_none=True,
+            exclude_unset=True,
+            exclude_defaults=True,
+        )
