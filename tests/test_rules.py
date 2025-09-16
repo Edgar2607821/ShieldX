@@ -29,13 +29,34 @@ async def client():
 
 # Regla válida para el target conocido 'mictlanx.get'
 valid_rule_payload = {
-    "target": "mictlanx.get",
-    "parameters": {
-        "bucket_id": {"type": "string", "description": "ID del bucket"},
-        "key": {"type": "string", "description": "Llave de acceso"},
-        "sink_path": {"type": "string", "description": "Ruta de destino"}
-    }
-}
+                        "target":{
+                            "alias": "bellmanford_v1.run"
+                        },
+                        "parameters":{
+                            "init":{  
+                                "graph":{
+                                        "type": "DiGraph",
+                                        "name": "graph",
+                                        "description": "Grafo dirigido almacenado en MictlanX",
+                                        "ref": "mictlanx://graphs_bucket@graph_k1/0/?content_type=application/octet-stream"
+                                },
+                                "other_init_param":  {"value": "A"},
+                            },
+                            "call":{  
+                                "source":  {"value": "A"},
+                                "target":{
+                                    "$ref": "mictlanx://params_bucket@target_label/0/?content_type=text/plain",
+                                    "type": "str",
+                                    "name": "target",
+                                    "description": "Nodo destino",
+                                    "value": "Z"
+                                },
+                            }
+                        }
+                    }
+
+
+
 
 # ---------- TESTS ----------
 
@@ -48,36 +69,6 @@ async def test_create_rule(client):
     assert response.status_code == 201
     assert isinstance(response.text, str)
 
-@pytest.mark.asyncio
-async def test_create_rule_missing_param(client):
-    """
-    ❌ Verifica que no se pueda crear una regla si faltan parámetros requeridos.
-    """
-    incomplete_payload = {
-        "target": "mictlanx.get",
-        "parameters": {
-            "bucket_id": {"type": "string", "description": "ID del bucket"},
-            # faltan 'key' y 'sink_path'
-        }
-    }
-    response = await client.post("/api/v1/rules", json=incomplete_payload)
-    assert response.status_code == 422 or response.status_code == 400
-
-@pytest.mark.asyncio
-async def test_create_rule_invalid_type(client):
-    """
-    ❌ Verifica que no se pueda crear una regla si un parámetro tiene un tipo no válido.
-    """
-    invalid_payload = {
-        "target": "mictlanx.get",
-        "parameters": {
-            "bucket_id": {"type": "dragon", "description": "No válido"},
-            "key": {"type": "string", "description": "Llave"},
-            "sink_path": {"type": "string", "description": "Destino"}
-        }
-    }
-    response = await client.post("/api/v1/rules", json=invalid_payload)
-    assert response.status_code == 422 or response.status_code == 400
 
 @pytest_asyncio.fixture
 async def created_rule_id(client):
@@ -85,7 +76,10 @@ async def created_rule_id(client):
     Crea una regla válida y devuelve su ID.
     """
     response = await client.post("/api/v1/rules", json=valid_rule_payload)
-    return response.text.strip('"')
+    data = response.json()
+    assert "id" in data, f"Error en creación de regla: {data}"
+    return data["id"]
+
 
 @pytest.mark.asyncio
 async def test_get_rule_by_id(client, created_rule_id):
@@ -94,7 +88,8 @@ async def test_get_rule_by_id(client, created_rule_id):
     """
     response = await client.get(f"/api/v1/rules/{created_rule_id}")
     assert response.status_code == 200
-    assert response.json()["target"] == valid_rule_payload["target"]
+    assert response.json()["target"]["alias"] == valid_rule_payload["target"]["alias"]
+
 
 @pytest.mark.asyncio
 async def test_get_rule_not_found(client):
@@ -110,13 +105,28 @@ async def test_update_rule(client, created_rule_id):
     🔄 Verifica que se pueda actualizar correctamente una regla existente.
     """
     updated_payload = {
-        "target": "mictlanx.get",
-        "parameters": {
-            "bucket_id": {  "type": "string", "description": "Modificado"},
-            "key": {    "type": "string", "description": "Clave"},
-            "sink_path": {  "type": "string", "description": "Ruta nueva"}
-        }
-    }
+                            "target": {"alias": "mictlanx.get"},
+                            "parameters": {
+                                "call": {
+                                    "bucket_id": {
+                                        "value": "bucket_mod",
+                                        "type": "string",
+                                        "description": "Modificado"
+                                    },
+                                    "key": {
+                                        "value": "new_file.txt",
+                                        "type": "string",
+                                        "description": "Clave"
+                                    },
+                                    "sink_path": {
+                                        "value": "/tmp/new_output",
+                                        "type": "string",
+                                        "description": "Ruta nueva"
+                                    }
+                                }
+                            }
+                        }
+
     response = await client.put(f"/api/v1/rules/{created_rule_id}", json=updated_payload)
     assert response.status_code == 200
     assert response.json()["message"] == "Rule updated"

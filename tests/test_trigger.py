@@ -29,10 +29,12 @@ async def client():
 
 trigger_payload = {
     "name": "TriggerTestNuevo1"
+
 }
 
 trigger_payloadcreate = {
-    "name": "TriggerTestNuevo2"
+    "name": "TriggerTestNuevo2",
+    "depends_on": "BellmanFordtest "
 }
 @pytest_asyncio.fixture
 async def existing_trigger(client):
@@ -53,8 +55,8 @@ async def test_create_trigger(client):
     response = await client.post("/api/v1/triggers/", json=trigger_payloadcreate)
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == trigger_payloadcreate["name"]
-    assert "_id" in data
+    assert data["message"] == "Trigger Created"
+    assert "id" in data
 
 @pytest.mark.asyncio
 async def test_get_trigger_by_name(client, existing_trigger):
@@ -86,7 +88,9 @@ async def test_update_trigger(client, existing_trigger):
     updated_payload = {"name": "TriggerTestActualizado"}
     response = await client.put(f"/api/v1/triggers/{trigger_payload['name']}", json=updated_payload)
     assert response.status_code == 200
-    assert response.json()["name"] == "TriggerTestActualizado"
+    data = response.json()
+    assert data["message"] == "Trigger Updated"
+    assert "id" in data
 
 @pytest.mark.asyncio
 async def test_delete_trigger(client, existing_trigger):
