@@ -39,7 +39,7 @@ async def created_event_type(client):
     """
     response = await client.post("/api/v1/event-types", json=event_type_payload)
     assert response.status_code == 201
-    return response.text.strip('"')  # ID devuelto como string con comillas
+    return response.json()["id"]  # ID devuelto como string con comillas
 
 # ---------- TESTS ----------
 
@@ -50,7 +50,7 @@ async def test_create_event_type(client):
     """
     response = await client.post("/api/v1/event-types", json=event_type_payload)
     assert response.status_code == 201
-    assert isinstance(response.text, str)
+    assert response.json()["id"]
 
 @pytest.mark.asyncio
 async def test_list_event_types(client, created_event_type):
@@ -71,8 +71,8 @@ async def test_get_event_type_by_id(client, created_event_type):
     response = await client.get(f"/api/v1/event-types/{created_event_type}")
     assert response.status_code == 200
     data = response.json()
-    assert data["event_type"] == event_type_payload["event_type"]
     assert "_id" in data
+    assert data["_id"] == created_event_type
 
 @pytest.mark.asyncio
 async def test_get_nonexistent_event_type(client):

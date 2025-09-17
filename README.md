@@ -9,28 +9,6 @@
 </div>
 
 ShieldX is a secure management platform for microservices. It provides an integrated dashboard and toolset to manage, monitor, and secure your microservices environment. With robust encryption, secure communication channels, and scalable orchestration, ShieldX is designed to safeguard your infrastructure while ensuring efficient operations.
-## ⚠️ Clone the repo and setup a remoto 🍴: 
-
-1. You must clone the remote from the organization of Muyal: 
-```bash
-git clone git@github.com:muyal-research-group/ShieldX.git
-```
-
-2. You must create a fork (please check it up in the [Contribution](#contribution) section)
-
-3. Add a new remote in your local git: 
-   ```bash
-   git remote add <remote_name> <ssh> 
-   ```
-You must select ```<remote_name>``` and you must copy the ```<ssh>``` uri in the github page of your 
-
-<div align="center">
-<img width=350 src="images/gitclone_ssh.png"/>
-</div>
-
-4. Remember to push all your commits to your ```<remote_name>``` to avoid github conflicts. 
-
-Thats it!  let's get started 🚀
 
 ## Getting started
 
@@ -52,50 +30,152 @@ Once you get all the software, please execute the following command to install t
 ```bash
 poetry install
 ```
-### How to deploy database and broker
 
-**Install docker and docker Compose:**
+## 🐳 Deploy with Docker
 
-- Make sure Docker is installed on your system. See [Docker's installation guide](https://docs.docker.com/get-docker/) for instructions.
-- Docker Compose is usually included with Docker Desktop. Otherwise, follow [Docker Compose installation instructions](https://docs.docker.com/compose/install/).
+This section explains how to build, run, and stop the **ShieldX** service using Docker and Docker Compose.
 
-**Navigate to your project directory:**
+---
 
-- Open a terminal and change to the directory where your `docker-compose.yml` file is located.
+### 1️⃣ Running directly from Docker Hub
 
-**Start the services:**
+Since the image `edgar821/shieldx-api:latest` is already published on Docker Hub, you can start the full stack (API and MongoDB) **without building anything locally**.
 
-- Run the following command to start both services in detached mode:
+Simply run:
+
+```bash
+docker compose up -d
+````
+
+Docker Compose will:
+
+* Download `edgar821/shieldx-api:latest` from Docker Hub.
+* Download `mongo:latest` if not already present.
+* Start all containers with the configuration in `docker-compose.yml`.
+
+---
+
+### 2️⃣ Build the image locally (optional)
+
+If you want to build the image from the `Dockerfile` instead of pulling from Docker Hub:
+
+```bash
+docker build -t edgar821/shieldx-api:latest .
+```
+
+**Explanation of parameters:**
+
+* `-t edgar821/shieldx-api:latest` → Sets the name and tag for the image.
+* `.` → The build context (current directory).
+
+Or with Docker Compose:
+
+```bash
+docker compose build
+```
+
+To rebuild without using the cache:
+
+```bash
+docker compose build --no-cache
+```
+
+---
+
+### 3️⃣ Important Dockerfile parameters
+
+* **Base Image:**
+  `python:3.11-slim` → Lightweight Python image for faster builds and smaller final image size.
+
+* **System Dependencies:**
+  Installs packages needed for compiling Python libraries (e.g., `build-essential`, `libpq-dev`).
+
+* **Poetry Setup:**
+  Configures Poetry to install dependencies inside the project (`virtualenvs.in-project true`) and installs all dependencies from `pyproject.toml` and `poetry.lock`.
+
+* **Application Code:**
+  Copies the source code into the container and sets the working directory to `/app`.
+
+* **Entry Command:**
+  Starts the FastAPI server with Uvicorn.
+
+---
+
+### 4️⃣ Important docker-compose parameters
+
+* **`image`**:
+  Uses `edgar821/shieldx-api:latest` from Docker Hub (no local build required).
+
+* **`ports`**:
+  Maps container ports to the host. Example: `"20000:20000"` makes the API available at `http://localhost:20000`.
+
+* **`depends_on`**:
+  Ensures `shieldx-db` (MongoDB) start before `shieldx-api`.
+
+* **`volumes`**:
+  Mounts persistent storage for MongoDB data.
+
+---
+
+### 5️⃣ Start the services
+
 ```bash
 docker compose up -d
 ```
 
-**Stopping the services:**
+`-d` runs containers in detached mode.
+
+---
+
+### 6️⃣ Stop and clean up
+
+To stop:
+
 ```bash
 docker compose down
 ```
 
-# 🛠️ Execution Guide: FastAPI Server & RabbitMQ Consumer/Producer
+To stop and remove all containers, networks, and volumes:
 
-This guide explains how to **run a FastAPI server** and manage **RabbitMQ consumers and producers** for event models.
-1. Run the FastAPI Server
+```bash
+docker compose down -v
+```
+
+⚠️ **Warning:** The `-v` option deletes volumes, which means all MongoDB data will be lost.
+
+---
+
+### 7️⃣ Environment variables
+
+`docker-compose.yml` can load variables from a `.env` file not committed to the repository for security reason, but an example is shown here:
+
+```env
+API_PORT=20000
+MONGO_URI=mongodb://shieldx-db:27017
+RABBITMQ_PORT=5672
+RABBIT_MAQ_MANAGEMENT_PORT=15672
+LOG_LEVEL=info
+API_IMAGE=edgar821/shieldx-api:latest
+```
+
+You can document them here or in a `.env.example` without sensitive data.
+
+---
+
+### 8️⃣ Accessing and Running the Service
+
+* **API endpoint:** [http://localhost:20000](http://localhost:20000)
+* **API Docs (Swagger UI):** [http://localhost:20000/docs](http://localhost:20000/docs)
+
+#### Running the FastAPI Server locally (development mode)
+
+
+
 ```bash
 poetry run python3 ./shieldx/server.py
 ```
-The server will be available at: http://localhost:20000, API docs can be accessed at: [http://localhost:20000/docs](http://localhost:20000/docs)
 
-2. Run the rabbitMQ Consumer:
-```bash
-poetry run python3 ./shieldx/consumer.py
-```
-This will connect to RabbitMQ and listen for incoming messages.
-3. Run the rabbitMQ Producer:
-```bash
-poetry run python3 ./shieldx/producer.py
-```
-
-
-
+---
 
 ## Running Tests
 
@@ -150,3 +230,26 @@ Please follow these steps to help improve the project:
 
 7. **Review Process:**
    - Your pull request will be reviewed by the maintainers. Feedback and further changes may be requested.
+
+## ⚠️ Clone the repo and setup a remote 🍴: 
+
+1. You must clone the remote from the organization of Muyal: 
+```bash
+git clone git@github.com:muyal-research-group/ShieldX.git
+```
+
+2. You must create a fork (please check it up in the [Contribution](#contribution) section)
+
+3. Add a new remote in your local git: 
+   ```bash
+   git remote add <remote_name> <ssh> 
+   ```
+You must select ```<remote_name>``` and you must copy the ```<ssh>``` uri in the github page of your 
+
+<div align="center">
+<img width=350 src="images/gitclone_ssh.png"/>
+</div>
+
+4. Remember to push all your commits to your ```<remote_name>``` to avoid github conflicts. 
+
+Thats it!  let's get started 🚀

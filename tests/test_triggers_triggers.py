@@ -35,12 +35,12 @@ async def create_parent_and_child_triggers(client):
     # Crear trigger padre
     resp1 = await client.post("/api/v1/triggers/", json={"name": "PadreTrigger"})
     assert resp1.status_code == 201
-    parent_id = resp1.json()["_id"]
+    parent_id = resp1.json()["id"]
 
     # Crear trigger hijo
     resp2 = await client.post("/api/v1/triggers/", json={"name": "HijoTrigger"})
     assert resp2.status_code == 201
-    child_id = resp2.json()["_id"]
+    child_id = resp2.json()["id"]
 
     return parent_id, child_id
 

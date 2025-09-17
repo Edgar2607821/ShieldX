@@ -42,7 +42,7 @@ async def setup_event_type_and_trigger(client):
     # Crear un trigger
     trg_resp = await client.post("/api/v1/triggers/", json={"name": "TriggerForLinking"})
     assert trg_resp.status_code == 201
-    trigger_id = trg_resp.json()["_id"]
+    trigger_id = trg_resp.json()["id"]
 
     return event_type_id, trigger_id
 
@@ -84,7 +84,7 @@ async def test_replace_triggers_for_event_type(client, setup_event_type_and_trig
     # Crear un segundo trigger
     response = await client.post("/api/v1/triggers/", json={"name": "SecondTrigger"})
     assert response.status_code == 201
-    new_trigger_id = response.json()["_id"]
+    new_trigger_id = response.json()["id"]
 
     # Reemplazar lista de triggers con solo el nuevo
     response = await client.put(

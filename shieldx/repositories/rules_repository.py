@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from shieldx.models.rule_models import RuleModel
+from shieldx.models import RuleModel
 from shieldx.log.logger_config import get_logger
-from shieldx.repositories.base_repository import BaseRepository
+from shieldx.repositories import BaseRepository
 
 L = get_logger(__name__)
 

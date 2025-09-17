@@ -1,8 +1,10 @@
-from shieldx.repositories.triggers_triggers_repository import TriggersTriggersRepository
+from fastapi import HTTPException
+from shieldx.repositories import TriggersTriggersRepository
 from shieldx.log.logger_config import get_logger
 import time as T
 
 L = get_logger(__name__)
+
 
 class TriggersTriggersService:
     """
@@ -28,24 +30,39 @@ class TriggersTriggersService:
         :return: Resultado de la operación de enlace.
         """
         t1 = T.time()
-        result = await self.repository.link(parent_id, child_id)
-        if result:
-            # Log de vínculo exitoso
-            L.info({
-                "event": "TRIGGERS_TRIGGERS.LINKED",
-                "parent_id": parent_id,
-                "child_id": child_id,
-                "time": T.time() - t1
-            })
-        else:
-            # Log si ya existía la relación
-            L.warning({
-                "event": "TRIGGERS_TRIGGERS.LINK.EXISTS",
-                "parent_id": parent_id,
-                "child_id": child_id,
-                "time": T.time() - t1
-            })
-        return result
+        try:
+            result = await self.repository.link(parent_id, child_id)
+            if result:
+                # Log de vínculo exitoso
+                L.info(
+                    {
+                        "event": "TRIGGERS_TRIGGERS.LINKED",
+                        "parent_id": parent_id,
+                        "child_id": child_id,
+                        "time": T.time() - t1,
+                    }
+                )
+            else:
+                # Log si ya existía la relación
+                L.warning(
+                    {
+                        "event": "TRIGGERS_TRIGGERS.LINK.EXISTS",
+                        "parent_id": parent_id,
+                        "child_id": child_id,
+                        "time": T.time() - t1,
+                    }
+                )
+            return result
+        except Exception as e:
+            L.error(
+                {
+                    "event": "TRIGGERS_TRIGGERS.LINK.ERROR",
+                    "parent_id": parent_id,
+                    "child_id": child_id,
+                    "error": str(e),
+                }
+            )
+            raise HTTPException(status_code=500, detail="Error linking triggers")
 
     async def unlink_triggers(self, parent_id: str, child_id: str):
         """
@@ -55,14 +72,27 @@ class TriggersTriggersService:
         :param child_id: ID del trigger hijo.
         """
         t1 = T.time()
-        await self.repository.unlink(parent_id, child_id)
-        # Log de desvinculación
-        L.info({
-            "event": "TRIGGERS_TRIGGERS.UNLINKED",
-            "parent_id": parent_id,
-            "child_id": child_id,
-            "time": T.time() - t1
-        })
+        try:
+            await self.repository.unlink(parent_id, child_id)
+            # Log de desvinculación
+            L.info(
+                {
+                    "event": "TRIGGERS_TRIGGERS.UNLINKED",
+                    "parent_id": parent_id,
+                    "child_id": child_id,
+                    "time": T.time() - t1,
+                }
+            )
+        except Exception as e:
+            L.error(
+                {
+                    "event": "TRIGGERS_TRIGGERS.UNLINK.ERROR",
+                    "parent_id": parent_id,
+                    "child_id": child_id,
+                    "error": str(e),
+                }
+            )
+            raise HTTPException(status_code=500, detail="Error unlinking triggers")
 
     async def list_children(self, parent_id: str):
         """
@@ -72,15 +102,27 @@ class TriggersTriggersService:
         :return: Lista de triggers hijos.
         """
         t1 = T.time()
-        children = await self.repository.get_children(parent_id)
-        # Log de consulta de hijos
-        L.debug({
-            "event": "TRIGGERS_TRIGGERS.LIST.CHILDREN",
-            "parent_id": parent_id,
-            "count": len(children),
-            "time": T.time() - t1
-        })
-        return children
+        try:
+            children = await self.repository.get_children(parent_id)
+            # Log de consulta de hijos
+            L.debug(
+                {
+                    "event": "TRIGGERS_TRIGGERS.LIST.CHILDREN",
+                    "parent_id": parent_id,
+                    "count": len(children),
+                    "time": T.time() - t1,
+                }
+            )
+            return children
+        except Exception as e:
+            L.error(
+                {
+                    "event": "TRIGGERS_TRIGGERS.LIST.CHILDREN.ERROR",
+                    "parent_id": parent_id,
+                    "error": str(e),
+                }
+            )
+            return []
 
     async def list_parents(self, child_id: str):
         """
@@ -90,12 +132,24 @@ class TriggersTriggersService:
         :return: Lista de triggers padres.
         """
         t1 = T.time()
-        parents = await self.repository.get_parents(child_id)
-        # Log de consulta de padres
-        L.debug({
-            "event": "TRIGGERS_TRIGGERS.LIST.PARENTS",
-            "child_id": child_id,
-            "count": len(parents),
-            "time": T.time() - t1
-        })
-        return parents
+        try:
+            parents = await self.repository.get_parents(child_id)
+            # Log de consulta de padres
+            L.debug(
+                {
+                    "event": "TRIGGERS_TRIGGERS.LIST.PARENTS",
+                    "child_id": child_id,
+                    "count": len(parents),
+                    "time": T.time() - t1,
+                }
+            )
+            return parents
+        except Exception as e:
+            L.error(
+                {
+                    "event": "TRIGGERS_TRIGGERS.LIST.PARENTS.ERROR",
+                    "child_id": child_id,
+                    "error": str(e),
+                }
+            )
+            return []

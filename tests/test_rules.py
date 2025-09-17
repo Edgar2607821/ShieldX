@@ -80,7 +80,6 @@ async def created_rule_id(client):
     assert "id" in data, f"Error en creación de regla: {data}"
     return data["id"]
 
-
 @pytest.mark.asyncio
 async def test_get_rule_by_id(client, created_rule_id):
     """

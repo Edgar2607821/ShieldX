@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from shieldx.db import get_database
-from shieldx.services.triggers_triggers_service import TriggersTriggersService
-from shieldx.repositories.triggers_triggers_repository import TriggersTriggersRepository
-from shieldx.models.triggers_triggers import TriggersTriggersModel
+from shieldx.services import TriggersTriggersService
+from shieldx.repositories import TriggersTriggersRepository
 from shieldx.log.logger_config import get_logger
 import time as T
+import shieldx_core.dtos as DTOS
 
 router = APIRouter()
 L = get_logger(__name__)
@@ -15,7 +15,7 @@ def get_service(db=Depends(get_database)):
 
 @router.get(
     "/triggers/{trigger_id}/children",
-    response_model=list[TriggersTriggersModel],
+    response_model=list[DTOS.TriggersTriggersDTO],
     status_code=status.HTTP_200_OK,
     summary="Listar triggers hijos",
     description="Devuelve todos los triggers hijos que son activados por el trigger padre especificado."
@@ -29,11 +29,11 @@ async def list_children(trigger_id: str, service: TriggersTriggersService = Depe
         "count": len(children),
         "time": T.time() - t1
     })
-    return children
+    return [DTOS.TriggersTriggersDTO.model_validate(c.model_dump(by_alias=True)) for c in children]
 
 @router.get(
     "/triggers/{trigger_id}/parents",
-    response_model=list[TriggersTriggersModel],
+    response_model=list[DTOS.TriggersTriggersDTO],
     status_code=status.HTTP_200_OK,
     summary="Listar triggers padres",
     description="Devuelve todos los triggers padres que activan al trigger especificado como hijo."
@@ -47,7 +47,7 @@ async def list_parents(trigger_id: str, service: TriggersTriggersService = Depen
         "count": len(parents),
         "time": T.time() - t1
     })
-    return parents
+    return [DTOS.TriggersTriggersDTO.model_validate(p.model_dump(by_alias=True)) for p in parents]
 
 @router.post(
     "/triggers/{parent_id}/children/{child_id}",

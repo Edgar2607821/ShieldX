@@ -1,7 +1,7 @@
 from typing import List
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.errors import PyMongoError
-from shieldx.repositories.base_repository import BaseRepository
+from shieldx.repositories import BaseRepository
 from shieldx.models import EventModel
 
 from shieldx.log.logger_config import get_logger

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
-from shieldx.services.events_triggers_service import EventsTriggersService
-from shieldx.repositories.events_triggers_repository import EventsTriggersRepository
-from shieldx.models.events_triggers import EventsTriggersModel
+from shieldx.services import EventsTriggersService
+from shieldx.repositories import EventsTriggersRepository
 from shieldx.db import get_database
 from shieldx.log.logger_config import get_logger
 import time as T
+import shieldx_core.dtos as DTOS
 
 router = APIRouter()
 L = get_logger(__name__)
@@ -15,7 +15,7 @@ def get_service(db=Depends(get_database)):
 
 @router.get(
     "/event-types/{event_type_id}/triggers",
-    response_model=list[EventsTriggersModel],
+    response_model=list[DTOS.EventsTriggersDTO],
     status_code=200,
     summary="Listar triggers de un tipo de evento",
     description="Devuelve todos los triggers vinculados al tipo de evento especificado."
@@ -30,7 +30,8 @@ async def list_triggers(event_type_id: str, service: EventsTriggersService = Dep
         "count": len(triggers),
         "time": T.time() - t1
     })
-    return triggers
+    return [DTOS.EventsTriggersDTO.model_validate(t.model_dump(by_alias=True)) for t in triggers]
+
 
 @router.post(
     "/event-types/{event_type_id}/triggers/{trigger_id}",

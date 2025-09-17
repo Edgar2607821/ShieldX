@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from shieldx.repositories.rules_repository import RuleRepository
-from shieldx.models.rule_models import RuleModel
+from shieldx.repositories import RuleRepository
+from shieldx.models import RuleModel
 from shieldx.log.logger_config import get_logger
 from bson import ObjectId
 import time as T
@@ -39,8 +39,9 @@ class RuleService:
             })
             return rule_id
         except Exception as e:
-            L.error({"event": "RULE.CREATE.ERROR", "error": str(e)})
-            raise
+            L.error({"event": "RULE.CREATE.ERROR", 
+                    "error": str(e)})
+            raise HTTPException(status_code=500, detail="Error creating rule")
 
     async def list_rules(self):
         """
@@ -69,7 +70,15 @@ class RuleService:
         :return: Objeto RuleModel si existe, de lo contrario lanza HTTPException 404.
         """
         t1 = T.time()
-        rule = await self.repository.find_one({"_id": ObjectId(rule_id)})
+        try:
+            rule = await self.repository.find_one({"_id": ObjectId(rule_id)})
+        except HTTPException:
+            raise
+        except Exception as e:
+            L.error({"event": "RULE.GET.ERROR", 
+                    "rule_id": rule_id, 
+                    "error": str(e)})
+            raise HTTPException(status_code=500, detail="Error fetching rule")
         if not rule:
             L.warning({
                 "event": "RULE.NOT_FOUND",
@@ -101,7 +110,7 @@ class RuleService:
             })
         except Exception as e:
             L.error({"event": "RULE.UPDATE.ERROR", "rule_id": rule_id, "error": str(e)})
-            raise
+            raise HTTPException(status_code=500, detail="Error updating rule")
 
     async def delete_rule(self, rule_id: str):
         """
@@ -110,17 +119,23 @@ class RuleService:
         :param rule_id: ID de la regla a eliminar.
         """
         t1 = T.time()
-        rule = await self.repository.find_one({"_id": ObjectId(rule_id)})
-        if not rule:
-            L.warning({
-                "event": "RULE.DELETE.NOT_FOUND",
+        try:
+            rule = await self.repository.find_one({"_id": ObjectId(rule_id)})
+            if not rule:
+                L.warning({
+                    "event": "RULE.DELETE.NOT_FOUND",
+                    "rule_id": rule_id,
+                    "time": T.time() - t1
+                })
+                raise HTTPException(status_code=404, detail="Rule not found")
+            await self.repository.delete_one({"_id": ObjectId(rule_id)})
+            L.info({
+                "event": "RULE.DELETED",
                 "rule_id": rule_id,
                 "time": T.time() - t1
             })
-            raise HTTPException(status_code=404, detail="Rule not found")
-        await self.repository.delete_one({"_id": ObjectId(rule_id)})
-        L.info({
-            "event": "RULE.DELETED",
-            "rule_id": rule_id,
-            "time": T.time() - t1
-        })
+        except HTTPException:
+            raise
+        except Exception as e:
+            L.error({"event": "RULE.DELETE.ERROR", "rule_id": rule_id, "error": str(e)})
+            raise HTTPException(status_code=500, detail="Error deleting rule")

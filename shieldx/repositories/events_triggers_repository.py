@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from shieldx.models.events_triggers import EventsTriggersModel
+from shieldx.models import EventsTriggersModel
 from shieldx.log.logger_config import get_logger
 import time as T
 from pymongo.errors import PyMongoError

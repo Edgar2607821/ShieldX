@@ -1,10 +1,10 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
 from pymongo.errors import PyMongoError
-from shieldx.models.trigger_models import TriggerModel
+from shieldx.models import TriggerModel
 from shieldx.log.logger_config import get_logger
 import time as T
-from shieldx.repositories.base_repository import BaseRepository
+from shieldx.repositories import BaseRepository
 
 
 L = get_logger(__name__)  # Logger específico para este módulo
