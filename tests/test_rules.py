@@ -167,3 +167,4 @@ async def test_delete_rule_not_found(client):
     """
     response = await client.delete("/api/v1/rules/000000000000000000000000")
     assert response.status_code == 404
+    
