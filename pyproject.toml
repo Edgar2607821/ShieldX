@@ -10,21 +10,28 @@ requires-python = ">=3.10,<4"
 dependencies = [
     "pydantic (>=2.10.6,<3.0.0)",
     "fastapi (>=0.115.11,<0.116.0)",
-    "mictlanx (==0.0.161a3)",
+    "mictlanx (==0.0.161a40)",
     "motor (>=3.7.0,<4.0.0)",
     "uvicorn (>=0.34.0,<0.35.0)",
     "aio-pika (>=9.5.5,<10.0.0)",
     "httpx (>=0.28.0)",
     "httpcore (>=1.0.7)",
     "shieldx-core (==0.0.1a9)",
+    "shieldx-client (==0.0.1a0)",
+    "axo (==0.0.3a1)",
 ]
+
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-asyncio = "^0.26.0"
 coverage = "^7.10.1"
-
+pandas = "1.5.3"
+jupyter = "^1.1.1"
+matplotlib = "^3.10.5"
+seaborn = "^0.13.2"
+ipykernel = "^6.30.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
