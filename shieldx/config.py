@@ -11,6 +11,14 @@ SHIELDX_MONGODB_MAX_RETRIES = int(os.environ.get("SHIELDX_MONGODB_MAX_RETRIES", 
 SHIELDX_VERSION = os.environ.get("SHIELDX_VERSION", "0.1.0")
 
 # ========================
+# Configuración de ShieldX Client
+# ========================
+SHIELDX_CLIENT_BASE_URL = os.environ.get(
+    "SHIELDX_CLIENT_BASE_URL",
+    f"http://{SHIELDX_HOST}:{SHIELDX_PORT}{SHIELDX_API_PREFIX}"
+)
+
+# ========================
 # Conexión a Base de Datos
 # ========================
 MONGODB_URI = os.environ.get("MONGODB_URI", "mongodb://localhost:27017/shieldx")
