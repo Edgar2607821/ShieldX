@@ -39,7 +39,7 @@ uvicorn = ">=0.34.0,<0.35.0"
 aio-pika = ">=9.5.5,<10.0.0"
 httpx = ">=0.28.0"
 httpcore = ">=1.0.7"
-shieldx-core = "==0.0.1a6"
+shieldx-core = "==0.0.1a9"
 shieldx-client = "==0.0.1a1"
 axo = "==0.0.3a1"
 
