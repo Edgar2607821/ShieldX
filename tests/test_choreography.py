@@ -45,7 +45,7 @@ graph_payload = {
                 "id": "ao2",
                 "alias": "plot.run",
                 "parameters": {
-                    "call": {"algorithm_name": "BellmanFord", "save_plot": true}
+                    "call": {"algorithm_name": "BellmanFord", "save_plot": True}
                 },
             },
         ],
