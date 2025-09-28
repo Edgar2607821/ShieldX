@@ -5,4 +5,4 @@ from shieldx.controllers.events_triggers_controller import router as events_trig
 from shieldx.controllers.triggers_triggers_controller import router as triggers_triggers_router
 from shieldx.controllers.rules_trigger_controller import router as rules_trigger_router
 from shieldx.controllers.rules_controller import router as rules_router
-
+from shieldx.controllers.choreography_controller import router as choreogrpy_router

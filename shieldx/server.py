@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from shieldx.db.indexes import create_indexes
 from shieldx.log import Log
 from shieldx.log.logger_config import get_logger
+from fastapi.middleware.cors import CORSMiddleware
 # import LogRecord,INFO,ERROR,DEBUG,WARNING
 import time as T
 from shieldx import config
@@ -73,6 +74,13 @@ app = FastAPI(
         "email": CONTACT_EMAIL,
     })
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # o ["http://localhost:5173"] si usas Vite
+    allow_credentials=True,
+    allow_methods=["*"],  # <- esto es lo importante
+    allow_headers=["*"],
+)
 
 # Include API routes from the service controller under /api/v1
 # Rutas para la gestión de eventos generados por servicios
@@ -89,6 +97,8 @@ app.include_router(Controllers.triggers_triggers_router, prefix=SHIELDX_API_PREF
 app.include_router(Controllers.rules_trigger_router, prefix=SHIELDX_API_PREFIX, tags=["Trigger - Rule"])
 # Rutas para CRUD de reglas
 app.include_router(Controllers.rules_router, prefix=SHIELDX_API_PREFIX,  tags=["Rules"])
+# Ruta para Choreogrphy
+app.include_router(Controllers.choreogrpy_router, prefix=SHIELDX_API_PREFIX, tags=["Choreography"])
 
 
 if __name__ == "__main__":
