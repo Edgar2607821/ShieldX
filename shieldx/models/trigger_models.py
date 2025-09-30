@@ -16,6 +16,7 @@ class TriggerModel(BaseModel):
 
     trigger_id: Optional[str] = Field(default=None, alias="_id")
     name: str
+    depends_on: Optional[str] = None
 
     @field_validator("trigger_id", mode="before")
     def convert_object_id(cls, v):

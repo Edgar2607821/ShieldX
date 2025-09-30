@@ -77,8 +77,12 @@ class BaseRepository(Generic[T]):
         Returns:
             str: ID del documento insertado (como string).
         """
-        try:
-            result = await self.collection.insert_one(data.model_dump(by_alias=True, exclude_none=True))
+        try:        
+            if hasattr(data, "dump"):
+                doc = data.dump()
+            else:
+                doc = data.model_dump(by_alias=True, exclude_none=True)
+            result = await self.collection.insert_one(doc)
             return str(result.inserted_id)
         except PyMongoError as e:
             L.error({            
@@ -102,7 +106,10 @@ class BaseRepository(Generic[T]):
         """
         try:
             if isinstance(data, BaseModel):
-                update_data = data.model_dump(by_alias=True, exclude_none=True)
+                if hasattr(data, "dump"):
+                    update_data = data.dump()
+                else:
+                    update_data = data.model_dump(by_alias=True, exclude_none=True)
             elif isinstance(data, dict):
                 update_data = data
             else:

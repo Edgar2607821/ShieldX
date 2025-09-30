@@ -29,10 +29,12 @@ async def client():
 
 trigger_payload = {
     "name": "TriggerTestNuevo1"
+
 }
 
 trigger_payloadcreate = {
-    "name": "TriggerTestNuevo2"
+    "name": "TriggerTestNuevo2",
+    "depends_on": "BellmanFordtest "
 }
 @pytest_asyncio.fixture
 async def existing_trigger(client):
