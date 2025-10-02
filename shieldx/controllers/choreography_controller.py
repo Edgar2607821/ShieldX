@@ -35,3 +35,11 @@ async def interpret_choreography_yaml(
     """
     request = ChoreographyRequest(format="yaml", content=payload)
     return await service.interpret(request)
+
+@router.post("/choreography/run")
+async def run_choreography():
+    """
+    Recibe un JSON desde la UI que describe la coreografía 
+    (grafo o YAML ) y lo interpreta para ejecutarlo con AXO.
+    """
+    pass
