@@ -6,3 +6,4 @@ from shieldx.controllers.triggers_triggers_controller import router as triggers_
 from shieldx.controllers.rules_trigger_controller import router as rules_trigger_router
 from shieldx.controllers.rules_controller import router as rules_router
 from shieldx.controllers.choreography_controller import router as choreogrpy_router
+from shieldx.controllers.choreography_run_controller import router as choreogrphy_run_router
