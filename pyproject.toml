@@ -10,15 +10,15 @@ requires-python = ">=3.10,<4"
 dependencies = [
     "pydantic (>=2.10.6,<3.0.0)",
     "fastapi (>=0.115.11,<0.116.0)",
-    "mictlanx (==0.0.161a40)",
+    "mictlanx (==0.1.0a2)",
     "motor (>=3.7.0,<4.0.0)",
     "uvicorn (>=0.34.0,<0.35.0)",
     "aio-pika (>=9.5.5,<10.0.0)",
     "httpx (>=0.28.0)",
     "httpcore (>=1.0.7)",
-    "shieldx-core (==0.0.1a9)",
-    "shieldx-client (==0.0.1a1)",
-    "axo (==0.0.3a1)",
+    "shieldx-core (==0.0.1a10)",
+    "shieldx-client (==0.0.1a2)",
+    "axo (==0.0.4a2)",
 ]
 
 
@@ -33,15 +33,15 @@ readme = "README.md"
 python = ">=3.10,<4"
 pydantic = ">=2.10.6,<3.0.0"
 fastapi = ">=0.115.11,<0.116.0"
-mictlanx = "==0.0.161a40"
+mictlanx = "==0.1.0a2"
 motor = ">=3.7.0,<4.0.0"
 uvicorn = ">=0.34.0,<0.35.0"
 aio-pika = ">=9.5.5,<10.0.0"
 httpx = ">=0.28.0"
 httpcore = ">=1.0.7"
-shieldx-core = "==0.0.1a9"
-shieldx-client = "==0.0.1a1"
-axo = "==0.0.3a1"
+shieldx-core = "==0.0.1a10"
+shieldx-client = "==0.0.1a2"
+axo = "==0.0.4a2"
 
 
 
