@@ -66,6 +66,10 @@ jobs:
 
       - name: Test with pytest  
         run: |  
+          mkdir -p tmp/mictlanx tmp/axo
+          export MICTLANX_LOG_PATH=$(pwd)/tmp/mictlanx
+          export AXO_LOG_PATH=$(pwd)/tmp/axo
+          export MICTLANX_PATH=$(pwd)/tmp/mictlanx
           poetry run coverage run -m pytest  -v -s  
         env:
           LOG_PATH: log  
