@@ -63,16 +63,19 @@ jobs:
             echo "Waiting for MongoDB..."
             sleep 3
           done
+      
+      - name: Prepare environment paths
+        run: |
+          mkdir -p tmp/mictlanx tmp/axo tmp/log
+          echo "LOG_PATH=${{ github.workspace }}/tmp/log" >> $GITHUB_ENV
+          echo "MICTLANX_LOG_PATH=${{ github.workspace }}/tmp/mictlanx" >> $GITHUB_ENV
+          echo "MICTLANX_PATH=${{ github.workspace }}/tmp/mictlanx" >> $GITHUB_ENV
+          echo "AXO_LOG_PATH=${{ github.workspace }}/tmp/axo" >> $GITHUB_ENV
 
       - name: Test with pytest  
         run: |  
-          mkdir -p tmp/mictlanx tmp/axo tmp/log
           poetry run coverage run -m pytest  -v -s  
-        env:
-          LOG_PATH: ${{ github.workspace }}/tmp/log
-          MICTLANX_LOG_PATH: ${{ github.workspace }}/tmp/mictlanx
-          MICTLANX_PATH: ${{ github.workspace }}/tmp/mictlanx
-          AXO_LOG_PATH: ${{ github.workspace }}/tmp/axo
+
       - name: Generate Coverage Report  
         run: |  
           poetry run coverage report -m
