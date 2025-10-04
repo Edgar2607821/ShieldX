@@ -99,8 +99,6 @@ app.include_router(Controllers.rules_trigger_router, prefix=SHIELDX_API_PREFIX, 
 app.include_router(Controllers.rules_router, prefix=SHIELDX_API_PREFIX,  tags=["Rules"])
 # Ruta para Choreogrphy
 app.include_router(Controllers.choreogrpy_router, prefix=SHIELDX_API_PREFIX, tags=["Choreography"])
-# Ruta para ejecutar la Choreogrphy
-app.include_router(Controllers.choreogrphy_run_router, prefix=SHIELDX_API_PREFIX, tags=["Choreography Run"])
 
 
 if __name__ == "__main__":
