@@ -64,6 +64,11 @@ jobs:
             sleep 3
           done
       
+      - name: Temporary fix for log permissions
+        run: |
+          sudo mkdir -p /log
+          sudo chmod -R 777 /log
+
       - name: Prepare environment paths
         run: |
           mkdir -p tmp/mictlanx tmp/axo tmp/log
