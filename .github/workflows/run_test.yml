@@ -67,13 +67,12 @@ jobs:
       - name: Test with pytest  
         run: |  
           mkdir -p tmp/mictlanx tmp/axo tmp/log
-          export MICTLANX_LOG_PATH=$(pwd)/tmp/mictlanx
-          export AXO_LOG_PATH=$(pwd)/tmp/axo
-          export MICTLANX_PATH=$(pwd)/tmp/mictlanx
-          export LOG_PATH=$(pwd)/tmp/log
           poetry run coverage run -m pytest  -v -s  
         env:
-          LOG_PATH: log  
+          LOG_PATH: ${{ github.workspace }}/tmp/log
+          MICTLANX_LOG_PATH: ${{ github.workspace }}/tmp/mictlanx
+          MICTLANX_PATH: ${{ github.workspace }}/tmp/mictlanx
+          AXO_LOG_PATH: ${{ github.workspace }}/tmp/axo
       - name: Generate Coverage Report  
         run: |  
           poetry run coverage report -m
