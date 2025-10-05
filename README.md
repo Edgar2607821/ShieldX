@@ -177,6 +177,122 @@ poetry run python3 ./shieldx/server.py
 
 ---
 
+### 9️⃣ Automating Docker Image Build and Publication
+
+Now that you can run ShieldX locally using Docker Compose, you can also automate the image build and publication process using scripts and GitHub Actions.
+
+#### 🧱 Local Build (build.sh)
+
+To build the image locally and deploy the full stack (API + MongoDB + RabbitMQ), simply run:
+
+```bash
+./build.sh [version]
+```
+
+**Example:**
+
+```bash
+./build.sh 0.0.1a0
+```
+
+This command will:
+
+* Build the Docker image `edgar821/shieldx-api:0.0.1a0`
+* Restart the stack using `docker-compose.yml`
+* Display a custom ASCII banner during build
+
+If no version is specified, `latest` will be used automatically.
+
+---
+
+#### 🚀 Automatic Publish via GitHub Actions
+
+A dedicated GitHub Action automatically builds and pushes the Docker image to Docker Hub whenever a new tag is created.
+
+**Workflow file:**
+
+```
+.github/workflows/docker-publish.yml
+```
+
+**Trigger condition:**
+
+```yaml
+on:
+  push:
+    tags:
+      - "v*"
+```
+
+**How it works:**
+
+1. When a tag is pushed (e.g. `v0.0.1a0`), the Action runs automatically.
+2. It builds the image using the repository Dockerfile.
+3. It logs in to Docker Hub using secrets.
+4. It pushes the tagged image to the public registry.
+
+**Example:**
+
+```bash
+git tag v0.0.1a0
+git push origin v0.0.1a0
+```
+
+The resulting image will be available at:
+👉 [https://hub.docker.com/r/edgar821/shieldx-api/tags](https://hub.docker.com/r/edgar821/shieldx-api/tags)
+
+---
+
+#### 🔐 GitHub Secrets Required
+
+Set the following under
+**Settings → Secrets and variables → Actions**
+
+| Secret Name       | Description             | Example             |
+| ----------------- | ----------------------- | ------------------- |
+| `DOCKER_USERNAME` | Docker Hub username     | `edgar821`          |
+| `DOCKER_TOKEN`    | Docker Hub access token | `ghp_xxxxxxxxxxxxx` |
+
+> 🔹 Generate your token at *Docker Hub → Account Settings → Security → New Access Token* with **Read, Write, Delete** permissions.
+
+---
+
+#### 🧩 Optional Manual Publish (publish.sh)
+
+You can also push manually using:
+
+```bash
+export DOCKER_USERNAME=edgar821
+export DOCKER_TOKEN=<your_docker_hub_token>
+./publish.sh [version]
+```
+
+**Example:**
+
+```bash
+./publish.sh 0.0.1a0
+```
+
+This will log in to Docker Hub, push the image, and log out automatically.
+
+---
+
+#### ✅ Quick Summary
+
+| Action                   | Command                                        | Description                           |
+| ------------------------ | ---------------------------------------------- | ------------------------------------- |
+| 🧱 Build locally         | `./build.sh 0.0.1a0`                           | Builds and runs the stack             |
+| 🚀 Publish manually      | `./publish.sh 0.0.1a0`                         | Pushes the image to Docker Hub        |
+| 🤖 Publish automatically | `git tag v0.0.1a0 && git push origin v0.0.1a0` | Triggers GitHub Action build and push |
+
+---
+
+📘 **In summary:**
+The Docker Compose setup helps you run ShieldX locally, while the CI/CD workflow (`build.sh`, `publish.sh`, and GitHub Actions) ensures consistent and automatic publishing to Docker Hub for production releases.
+
+
+---
+
 ## Running Tests
 
 All tests for this project are located in the `tests/` folder at the root of the repository. We use [pytest](https://docs.pytest.org/) as our testing framework.

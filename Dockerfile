@@ -41,8 +41,9 @@ WORKDIR /app
 
 # Crear carpeta de logs y dar permisos
 RUN mkdir /log && chown -R appuser:appuser /log
-
-
+# Crear directorio accesible para logs de MictlanX 
+RUN mkdir -p /mictlanx && chown -R appuser:appuser /mictlanx
+RUN mkdir -p /axo && chown -R appuser:appuser /axo
 
 # Copia la venv y el código desde builder
 COPY --from=builder /app/.venv /app/.venv
