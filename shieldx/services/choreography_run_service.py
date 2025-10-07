@@ -6,31 +6,29 @@ from axo.storage.services import MictlanXStorageService
 from axo.errors import AxoError
 from axo import Axo
 
-from shieldx_core.dtos import GraphSpecDTO, NodeDTO
+from shieldx_core.dtos import EnrichedGraphSpecDTO, NodeDTO, DeploymentInfoDTO
 
 class ChoreographyRunServiece:
     def __init__(self):
         self.endpoint_manager = DistributedEndpointManager()
         self.storage_service = MictlanXStorageService()
 
-    async def run(self, graph: GraphSpecDTO):
+    async def run(self, graph: EnrichedGraphSpecDTO):
 
         dem = DistributedEndpointManager()
-        endpoint_ids = {
-            node.rule.target.axo_endpoint_id
-            for node in graph.vertices
-            if node.type == "ActiveObject" and node.rule
-        }
-        for eid in endpoint_ids:
-            dem.add_endpoint(
-                endpoint_id=eid,
-                hostname="localhost",
-                protocol="tcp",
-                req_res_port=16667,
-                pubsub_port=16666
-            )
-
         ss = MictlanXStorageService()
+        for node in graph.vertices:
+            if node.type == "ActiveObject" and node.deployment_info:
+                info: DeploymentInfoDTO = node.deployment_info
+                dem.add_endpoint(
+                    endpoint_id=node.rule.target.axo_endpoint_id,
+                    hostname=info.host,
+                    protocol="tcp",
+                    req_res_port=info.req_res_port,
+                    pubsub_port=info.pubsub_port
+                )
+
+        
 
         G = nx.DiGraph()
         for v in graph.vertices:
