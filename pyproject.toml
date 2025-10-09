@@ -18,6 +18,7 @@ dependencies = [
     "httpcore (>=1.0.7)",
     "shieldx-core (==0.0.1a10)",
     "shieldx-client (==0.0.1a2)",
+    "axo @ file:///home/nacho/Programming/Python/axo/dist/axo-0.0.4a3.tar.gz",
 ]
 
 

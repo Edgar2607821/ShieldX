@@ -8,6 +8,7 @@ SHIELDX_API_PREFIX = os.environ.get("SHIELDX_API_PREFIX", "/api/v1")
 SHIELDX_HOST = os.environ.get("SHIELDX_HOST", "0.0.0.0")
 SHIELDX_PORT = int(os.environ.get("SHIELDX_PORT", "20000"))
 SHIELDX_MONGODB_MAX_RETRIES = int(os.environ.get("SHIELDX_MONGODB_MAX_RETRIES", "5"))
+SHIELDX_RELOAD = bool(int(os.environ.get("SHIELDX_RELOAD", "1")))
 SHIELDX_VERSION = os.environ.get("SHIELDX_VERSION", "0.1.0")
 
 # ========================

@@ -20,6 +20,7 @@ SHIELDX_VERSION = config.SHIELDX_VERSION
 CONTACT_NAME = config.CONTACT_NAME
 CONTACT_EMAIL = config.CONTACT_EMAIL
 SHIELDX_MONGODB_MAX_RETRIES = config.SHIELDX_MONGODB_MAX_RETRIES
+SHIELDX_RELOAD = config.SHIELDX_RELOAD
 
 L =  get_logger("shieldx-server")
 
@@ -101,5 +102,5 @@ app.include_router(Controllers.rules_router, prefix=SHIELDX_API_PREFIX,  tags=["
 app.include_router(Controllers.choreogrpy_router, prefix=SHIELDX_API_PREFIX, tags=["Choreography"])
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host=SHIELDX_HOST, port=SHIELDX_PORT)
+# if __name__ == "__main__":
+    # uvicorn.run(app, host=SHIELDX_HOST, port=SHIELDX_PORT,reload=SHIELDX_RELOAD)
