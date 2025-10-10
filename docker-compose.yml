@@ -8,20 +8,30 @@ services:
       - mongo-data:/data/db
     restart: unless-stopped
 
-  shieldx-broker:
-    image: rabbitmq:4.0-management
-    container_name: shieldx-broker
-    ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
-    restart: unless-stopped
+  # shieldx-broker:
+  #   image: rabbitmq:4.0-management
+  #   container_name: shieldx-broker
+  #   ports:
+  #     - "${RABBITMQ_PORT:-5672}:5672"
+  #     - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+  #   restart: unless-stopped
 
   shieldx-api:
-    image: ${API_IMAGE:-edgar821/shieldx-api:latest}
+    # image: ${API_IMAGE:-edgar821/shieldx-api:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: shieldx-api
     depends_on:
       - shieldx-db
-      - shieldx-broker
+    environment:
+      - MONGO_URL=mongodb://shieldx-db:27017/shieldx
+      - MONGO_DATABASE=shieldx
+      - LOG_PATH=/app/log
+      - LOG_LEVEL=DEBUG
+      - LOG_ROTATION_WHEN=h
+      - LOG_ROTATION_INTERVAL=24
+      - SHIELDX_ENV=prod
     ports:
       - "${API_PORT}:20000"
     volumes:
