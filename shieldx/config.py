@@ -22,8 +22,8 @@ SHIELDX_CLIENT_BASE_URL = os.environ.get(
 # ========================
 # Conexión a Base de Datos
 # ========================
-MONGODB_URI = os.environ.get("MONGODB_URI", "mongodb://localhost:27017/shieldx")
-MONGO_DATABASE_NAME = os.environ.get("MONGO_DATABASE_NAME", "shieldx")
+MONGODB_URI = os.environ.get("SHIELDX_MONGODB_URI", "mongodb://localhost:27017/shieldx")
+MONGO_DATABASE_NAME = os.environ.get("SHIELDX_MONGO_DATABASE_NAME", "shieldx")
 
 # ========================
 # Configuración de Logs
