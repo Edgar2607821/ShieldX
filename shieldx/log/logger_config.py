@@ -17,9 +17,9 @@ def console_handler_filter(lr: logging.LogRecord):
 
 def get_logger(name: str):
     return Log(
-        name=name,
-        console_handler_filter=console_handler_filter,
-        #path=SHIELDX_LOG_PATH
+        name                   = name,
+        console_handler_filter = console_handler_filter,
+        path                   = config.LOG_PATH
     )
 
 # Logger genérico

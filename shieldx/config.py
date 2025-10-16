@@ -28,7 +28,7 @@ MONGO_DATABASE_NAME = os.environ.get("MONGO_DATABASE_NAME", "shieldx")
 # ========================
 # Configuración de Logs
 # ========================
-LOG_PATH              = os.environ.get("LOG_PATH", "/log")
+LOG_PATH              = os.environ.get("SHIELDX_LOG_PATH", "/log")
 LOG_LEVEL             = os.environ.get("LOG_LEVEL", "DEBUG")
 LOG_ROTATION_WHEN     = os.environ.get("LOG_ROTATION_WHEN", "m")
 LOG_ROTATION_INTERVAL = int(os.environ.get("LOG_ROTATION_INTERVAL", "10"))

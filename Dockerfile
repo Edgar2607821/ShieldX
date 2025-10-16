@@ -19,7 +19,7 @@ COPY pyproject.toml poetry.lock* ./
 
 # Instala SOLO dependencias (no dev) en una venv dentro de /opt/venv
 RUN poetry config virtualenvs.in-project true && \
-    poetry lock --no-update && \
+    poetry lock && \
     poetry install --no-interaction --no-ansi --without dev
 
 # Copia código fuente
@@ -29,28 +29,23 @@ COPY shieldx ./shieldx
 FROM python:3.11-slim AS runtime
 
 # Crea un usuario no root
-RUN useradd -m -u 10001 appuser
+# RUN useradd -m -u 10001 appuser
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup --no-create-home appuser
+
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PORT=20000 \
-    HOST=0.0.0.0
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
-
-# Crear carpeta de logs y dar permisos
-RUN mkdir /log && chown -R appuser:appuser /log
-# Crear directorio accesible para logs de MictlanX 
-RUN mkdir -p /mictlanx && chown -R appuser:appuser /mictlanx
-RUN mkdir -p /axo && chown -R appuser:appuser /axo
 
 # Copia la venv y el código desde builder
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/shieldx /app/shieldx
 
-# Puerto expuesto (coincide con el server actual)
-EXPOSE 20000
+# Crear carpeta de logs y dar permisos
+RUN mkdir -p /app/log /log /mictlanx /axo && \
+    chown -R appuser:appgroup /app /app/log /log /mictlanx /axo
 
 # Healthcheck sencillo a /docs (ajusta si tienes /health)
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD \
@@ -61,4 +56,4 @@ USER appuser
 
 # Arranque del servidor
 # Si tu entrypoint cambia, ajusta este comando
-CMD ["uvicorn", "shieldx.server:app", "--host", "0.0.0.0", "--port", "20000", "--workers", "2"]
+# CMD ["uvicorn", "shieldx.server:app", "--host", "0.0.0.0", "--port", "20000", "--workers", "2"]

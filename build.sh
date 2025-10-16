@@ -3,9 +3,9 @@ set -e  # Detener ejecución si ocurre algún error
 
 # Variables
 
-IMAGE_NAME="edgar821/shieldx-api"
-VERSION=${1:-"latest"}
-COMPOSE_FILE="docker-compose.yml"
+IMAGE_NAME=${1:-"edgar821/shieldx-api"}
+IMAGE_TAG=${2:-"latest"}
+COMPOSE_FILE=${3:-"docker-compose.yml"}
 
 # Banner de inicio para ShieldX
 echo -e "\e[36m"  # Color cian
@@ -23,15 +23,15 @@ echo
 echo "=============================================="
 echo " 🛠️  Construyendo imagen Docker de ShieldX"
 echo "----------------------------------------------"
-echo " Imagen: $IMAGE_NAME:$VERSION"
+echo " Imagen: $IMAGE_NAME:$IMAGE_TAG"
 echo " Compose file: $COMPOSE_FILE"
 echo "=============================================="
 
 # Construcción de la imagen local
 
-docker build -f ./Dockerfile -t $IMAGE_NAME:$VERSION .
+docker build -f ./Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
-echo "✅ Imagen construida correctamente: $IMAGE_NAME:$VERSION"
+echo "✅ Imagen construida correctamente: $IMAGE_NAME:$IMAGE_TAG"
 
 if [ -f "$COMPOSE_FILE" ]; then
     echo "📦 Levantando stack con docker-compose..."

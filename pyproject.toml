@@ -16,9 +16,9 @@ dependencies = [
     "aio-pika (>=9.5.5,<10.0.0)",
     "httpx (>=0.28.0)",
     "httpcore (>=1.0.7)",
-    "axo @ file:///home/nacho/Programming/Python/axo/dist/axo-0.0.4a3.tar.gz",
     "shieldx-core (==0.0.1a15)",
     "shieldx-client (==0.0.1a8)",
+    "axo (==0.0.4a3)"
 ]
 
 
@@ -41,7 +41,7 @@ httpx = ">=0.28.0"
 httpcore = ">=1.0.7"
 shieldx-core = "==0.0.1a15"
 shieldx-client = "==0.0.1a8"
-
+axo = "==0.0.4a3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"

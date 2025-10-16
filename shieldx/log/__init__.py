@@ -92,7 +92,6 @@ class Log(logging.Logger):
                 filename: Option[str] = NONE,
                 output_path: Option[str] = NONE,
                 error_output_path: Option[str] = NONE,
-                create_folder: bool = True,
                 to_file: bool = LOG_TO_FILE,
                 when: str = LOG_ROTATION_WHEN,
                 interval: int = LOG_ROTATION_INTERVAL
@@ -121,7 +120,7 @@ class Log(logging.Logger):
         """
         super().__init__(name, level)
 
-        if not os.path.exists(path) and create_folder:
+        if not os.path.exists(path):
             os.makedirs(path)
 
         if not disabled:
