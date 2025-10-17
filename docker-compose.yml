@@ -3,7 +3,7 @@ services:
     image: mongo:latest
     container_name: shieldx-db
     ports:
-      - "${MONGO_PORT:-27018}:27017"
+      - "${SHIELDX_MONGO_PORT:-27018}:27017"
     volumes:
       - mongo-data:/data/db
     restart: unless-stopped
@@ -19,12 +19,12 @@ services:
     depends_on:
       - shieldx-db
     environment:
-      - MONGO_URL=mongodb://shieldx-db:27017/shieldx
-      - MONGO_DATABASE=shieldx
+      - SHIELDX_MONGODB_URI=mongodb://shieldx-db:27017/shieldx
+      - SHIELDX_MONGO_DATABASE_NAME=shieldx
       - SHIELDX_LOG_PATH=/app/log
-      - LOG_LEVEL=DEBUG
-      - LOG_ROTATION_WHEN=h
-      - LOG_ROTATION_INTERVAL=24
+      - SHIELDX_LOG_LEVEL=DEBUG
+      - SHIELDX_LOG_ROTATION_WHEN=h
+      - SHIELDX_LOG_ROTATION_INTERVAL=24
       - SHIELDX_ENV=prod
     ports:
       - "${SHIELDX_PORT:-20000}:20000"
@@ -42,8 +42,8 @@ services:
   #   image: rabbitmq:4.0-management
   #   container_name: shieldx-broker
   #   ports:
-  #     - "${RABBITMQ_PORT:-5672}:5672"
-  #     - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+  #     - "${SHIELDX_RABBITMQ_PORT:-5672}:5672"
+  #     - "${SHIELDX_RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
   #   restart: unless-stopped
 volumes:
   mongo-data:

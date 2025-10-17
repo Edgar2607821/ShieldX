@@ -15,30 +15,35 @@ SHIELDX_VERSION = os.environ.get("SHIELDX_VERSION", "0.1.0")
 # Configuración de ShieldX Client
 # ========================
 SHIELDX_CLIENT_BASE_URL = os.environ.get(
-    "SHIELDX_CLIENT_BASE_URL",
-    f"http://{SHIELDX_HOST}:{SHIELDX_PORT}{SHIELDX_API_PREFIX}"
+"SHIELDX_CLIENT_BASE_URL",
+f"http://{SHIELDX_HOST}:{SHIELDX_PORT}{SHIELDX_API_PREFIX}"
 )
 
 # ========================
 # Conexión a Base de Datos
 # ========================
-MONGODB_URI = os.environ.get("SHIELDX_MONGODB_URI", "mongodb://localhost:27017/shieldx")
-MONGO_DATABASE_NAME = os.environ.get("SHIELDX_MONGO_DATABASE_NAME", "shieldx")
+SHIELDX_MONGODB_URI = os.environ.get("SHIELDX_MONGODB_URI", "mongodb://localhost:27017/shieldx")
+SHIELDX_MONGO_DATABASE_NAME = os.environ.get("SHIELDX_MONGO_DATABASE_NAME", "shieldx")
 
 # ========================
 # Configuración de Logs
 # ========================
-LOG_PATH              = os.environ.get("SHIELDX_LOG_PATH", "/log")
-LOG_LEVEL             = os.environ.get("LOG_LEVEL", "DEBUG")
-LOG_ROTATION_WHEN     = os.environ.get("LOG_ROTATION_WHEN", "m")
-LOG_ROTATION_INTERVAL = int(os.environ.get("LOG_ROTATION_INTERVAL", "10"))
-LOG_TO_FILE           = bool(int(os.environ.get("LOG_TO_FILE", "1")))
-LOG_ERROR_FILE        = bool(int(os.environ.get("LOG_ERROR_FILE", "1")))
-SHIELDX_DEBUG         = bool(int(os.environ.get("SHIELDX_DEBUG", "1")))
-SHIELDX_ENV           = os.environ.get("SHIELDX_ENV", "dev")        # production, staging, development, dev, test
-SHIELDX_TEST          = bool(int(os.environ.get("SHIELDX_TEST", "1")))  # Modo de pruebas (no se conectan servicios externos)
+SHIELDX_LOG_PATH = os.environ.get("SHIELDX_LOG_PATH", "/log")
+SHIELDX_LOG_LEVEL = os.environ.get("SHIELDX_LOG_LEVEL", "DEBUG")
+SHIELDX_LOG_ROTATION_WHEN = os.environ.get("SHIELDX_LOG_ROTATION_WHEN", "m")
+SHIELDX_LOG_ROTATION_INTERVAL = int(os.environ.get("SHIELDX_LOG_ROTATION_INTERVAL", "10"))
+SHIELDX_LOG_TO_FILE = bool(int(os.environ.get("SHIELDX_LOG_TO_FILE", "1")))
+SHIELDX_LOG_ERROR_FILE = bool(int(os.environ.get("SHIELDX_LOG_ERROR_FILE", "1")))
+
+# ========================
+# Modo y entorno
+# ========================
+SHIELDX_DEBUG = bool(int(os.environ.get("SHIELDX_DEBUG", "1")))
+SHIELDX_ENV = os.environ.get("SHIELDX_ENV", "dev")
+SHIELDX_TEST = bool(int(os.environ.get("SHIELDX_TEST", "1")))
+
 # ========================
 # Contacto de la API
 # ========================
-CONTACT_NAME = os.environ.get("CONTACT_NAME", "Equipo ShieldX")
-CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "soporte@shieldx.io")
+SHIELDX_CONTACT_NAME = os.environ.get("SHIELDX_CONTACT_NAME", "Equipo ShieldX")
+SHIELDX_CONTACT_EMAIL = os.environ.get("SHIELDX_CONTACT_EMAIL", "soporte@shieldx.io")

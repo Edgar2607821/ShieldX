@@ -6,6 +6,7 @@ from shieldx.log import Log
 
 
 SHIELDX_DEBUG = config.SHIELDX_DEBUG
+SHIELDX_LOG_PATH = config.SHIELDX_LOG_PATH
 #SHIELDX_LOG_PATH = os.environ.get("SHIELDX_LOG_PATH", "/log")
 
 
@@ -19,7 +20,7 @@ def get_logger(name: str):
     return Log(
         name                   = name,
         console_handler_filter = console_handler_filter,
-        path                   = config.LOG_PATH
+        path                   = SHIELDX_LOG_PATH
     )
 
 # Logger genérico

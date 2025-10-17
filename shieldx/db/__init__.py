@@ -2,8 +2,8 @@ import os
 from motor.motor_asyncio import AsyncIOMotorClient,AsyncIOMotorCollection
 from shieldx import config
 
-MONGODB_URI = config.MONGODB_URI
-MONGO_DATABASE_NAME = config.MONGO_DATABASE_NAME
+SHIELDX_MONGODB_URI = config.SHIELDX_MONGODB_URI
+SHIELDX_MONGO_DATABASE_NAME = config.SHIELDX_MONGO_DATABASE_NAME
 
 # Initialize MongoClient
 client = None
@@ -11,7 +11,7 @@ client = None
 # Get the MongoDB client and database instance
 def get_database():
     global client
-    return  client[MONGO_DATABASE_NAME] if client else None 
+    return  client[SHIELDX_MONGO_DATABASE_NAME] if client else None 
 
 def get_collection(name:str)->AsyncIOMotorCollection:
     db =  get_database()
@@ -19,7 +19,7 @@ def get_collection(name:str)->AsyncIOMotorCollection:
 # Startup event to initialize the MongoClient when the application starts
 async def connect_to_mongo():
     global client
-    client = AsyncIOMotorClient(MONGODB_URI)
+    client = AsyncIOMotorClient(SHIELDX_MONGODB_URI)
 
 # Shutdown event to close the MongoClient when the application shuts down
 async def close_mongo_connection():

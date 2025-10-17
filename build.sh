@@ -21,7 +21,7 @@ echo -e "\e[0m"  # Restaurar color por defecto
 echo
 
 echo "=============================================="
-echo " 🛠️  Construyendo imagen Docker de ShieldX"
+echo " 🛠️  Building ShieldX Docker image"
 echo "----------------------------------------------"
 echo " Imagen: $IMAGE_NAME:$IMAGE_TAG"
 echo " Compose file: $COMPOSE_FILE"
@@ -31,15 +31,15 @@ echo "=============================================="
 
 docker build -f ./Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
-echo "✅ Imagen construida correctamente: $IMAGE_NAME:$IMAGE_TAG"
+echo "✅ Image built successfully: $IMAGE_NAME:$IMAGE_TAG"
 
 if [ -f "$COMPOSE_FILE" ]; then
-    echo "📦 Levantando stack con docker-compose..."
+    echo "📦 Starting stack with Docker Compose..."
     docker compose -f "$COMPOSE_FILE" down || true
     docker compose -f "$COMPOSE_FILE" up -d
-    echo "✅ Stack desplegado correctamente."
+    echo "✅ Stack deployed successfully."
 else
-    echo "⚠️  No se encontró $COMPOSE_FILE, solo se construyó la imagen."
+    echo "⚠️  $COMPOSE_FILE not found, only the image was built."
 fi
 
-echo "✅ Proceso finalizado."
+echo "✅ Process completed successfully."

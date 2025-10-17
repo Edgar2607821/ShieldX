@@ -3,12 +3,12 @@ from shieldx import config
 from logging.handlers import TimedRotatingFileHandler
 from option import NONE, Option
 
-LOG_PATH            = config.LOG_PATH                   
-LOG_LEVEL           = config.LOG_LEVEL
-LOG_ROTATION_WHEN   = config.LOG_ROTATION_WHEN
-LOG_ROTATION_INTERVAL = config.LOG_ROTATION_INTERVAL
-LOG_TO_FILE         = config.LOG_TO_FILE
-LOG_ERROR_FILE      = config.LOG_ERROR_FILE
+SHIELDX_LOG_PATH              = config.SHIELDX_LOG_PATH
+SHIELDX_LOG_LEVEL             = config.SHIELDX_LOG_LEVEL
+SHIELDX_LOG_ROTATION_WHEN     = config.SHIELDX_LOG_ROTATION_WHEN
+SHIELDX_LOG_ROTATION_INTERVAL = config.SHIELDX_LOG_ROTATION_INTERVAL
+SHIELDX_LOG_TO_FILE           = config.SHIELDX_LOG_TO_FILE
+SHIELDX_LOG_ERROR_FILE        = config.SHIELDX_LOG_ERROR_FILE
 
 
 class DumbLogger(object):
@@ -81,20 +81,20 @@ class Log(logging.Logger):
     def __init__(self,
                 formatter: logging.Formatter = JsonFormatter(),
                 name: str = "shieldx",
-                level: int = getattr(logging, LOG_LEVEL.upper(), logging.DEBUG),
-                path: str = LOG_PATH,
+                level: int = getattr(logging, SHIELDX_LOG_LEVEL.upper(), logging.DEBUG),
+                path: str = SHIELDX_LOG_PATH,
                 disabled: bool = False,
                 console_handler_filter=lambda record: record.levelno == logging.DEBUG,
                 file_handler_filter=lambda record: record.levelno == logging.INFO,
                 console_handler_level: int = logging.DEBUG,
                 file_handler_level: int = logging.INFO,
-                error_log: bool = LOG_ERROR_FILE,
+                error_log: bool = SHIELDX_LOG_ERROR_FILE,
                 filename: Option[str] = NONE,
                 output_path: Option[str] = NONE,
                 error_output_path: Option[str] = NONE,
-                to_file: bool = LOG_TO_FILE,
-                when: str = LOG_ROTATION_WHEN,
-                interval: int = LOG_ROTATION_INTERVAL
+                to_file: bool = SHIELDX_LOG_TO_FILE,
+                when: str = SHIELDX_LOG_ROTATION_WHEN,
+                interval: int = SHIELDX_LOG_ROTATION_INTERVAL,
                 ):
         """
         Initialize the logger with optional console and file handlers.
