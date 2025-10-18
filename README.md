@@ -221,12 +221,12 @@ A dedicated GitHub Action automatically builds and pushes the Docker image to Do
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 ```
 
 **How it works:**
 
-1. When a tag is pushed (e.g. `v0.0.1a0`), the Action runs automatically.
+1. When a tag is pushed (e.g. `0.0.1a0`), the Action runs automatically.
 2. It builds the image using the repository Dockerfile.
 3. It logs in to Docker Hub using secrets.
 4. It pushes the tagged image to the public registry.
@@ -234,8 +234,8 @@ on:
 **Example:**
 
 ```bash
-git tag v0.0.1a0
-git push origin v0.0.1a0
+git tag 0.0.1a0
+git push origin 0.0.1a0
 ```
 
 The resulting image will be available at:
