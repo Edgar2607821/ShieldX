@@ -186,13 +186,13 @@ Now that you can run ShieldX locally using Docker Compose, you can also automate
 To build the image locally and deploy the full stack (API + MongoDB + RabbitMQ), simply run:
 
 ```bash
-./build.sh [version]
+./build.sh [IMAGE_NAME] [IMAGE_TAG]
 ```
 
 **Example:**
 
 ```bash
-./build.sh 0.0.1a0
+./build.sh shieldx api-0.0.1a0
 ```
 
 This command will:
@@ -281,7 +281,7 @@ This will log in to Docker Hub, push the image, and log out automatically.
 
 | Action                   | Command                                        | Description                           |
 | ------------------------ | ---------------------------------------------- | ------------------------------------- |
-| 🧱 Build locally         | `./build.sh 0.0.1a0`                           | Builds and runs the stack             |
+| 🧱 Build locally         | `./build.sh shieldx api-0.0.1a0`                           | Builds and runs the stack             |
 | 🚀 Publish manually      | `./publish.sh 0.0.1a0`                         | Pushes the image to Docker Hub        |
 | 🤖 Publish automatically | `git tag v0.0.1a0 && git push origin v0.0.1a0` | Triggers GitHub Action build and push |
 
