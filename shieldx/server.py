@@ -75,9 +75,14 @@ app = FastAPI(
         "email": CONTACT_EMAIL,
     })
 
+origins = [
+    "https://muyal.tamps.cinvestav.mx",
+]
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # o ["http://localhost:5173"] si usas Vite
+    allow_origins=origins,  # o ["http://localhost:5173"] si usas Vite
     allow_credentials=True,
     allow_methods=["*"],  # <- esto es lo importante
     allow_headers=["*"],
