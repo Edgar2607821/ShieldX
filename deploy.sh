@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-COMPOSE_FILE=${1:-"docker-compose.yml"}
-PROJECT_NAME=${2:-"shieldx"}
+PROJECT_NAME=${1:-"shieldx"}
+readonly ENV_FILE=${2:-".env.dev"}
 COMPOSE_PROFILES=${3:-""}   # opcional, ej: "dev,api"
-PULL_MODE=${4:-"auto"}       # auto|always|never
 
+COMPOSE_FILE=${4:-"docker-compose.yml"}
 # Banner
 echo -e "\e[36m"
 cat << "EOF"
@@ -29,16 +29,16 @@ echo "----------------------------------------------"
 echo " Compose file : ${COMPOSE_FILE}"
 echo " Project name : ${PROJECT_NAME}"
 [[ -n "${COMPOSE_PROFILES}" ]] && echo " Profiles     : ${COMPOSE_PROFILES}"
-echo " Pull mode    : ${PULL_MODE}  (auto|always|never)"
 echo "=============================================="
 
 # Reinicio idempotente del stack
+docker network create shieldx-net || true
 docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" down || true
 
 if [[ -n "${COMPOSE_PROFILES}" ]]; then
-    COMPOSE_PROFILES="${COMPOSE_PROFILES}" docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" up -d
+    COMPOSE_PROFILES="${COMPOSE_PROFILES}" docker compose --env-file ${ENV_FILE} -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" up -d
 else
-    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" up -d
+    docker compose --env-file ${ENV_FILE} -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" up --build -d
 fi
 
 echo "✅ Stack deployed successfully."

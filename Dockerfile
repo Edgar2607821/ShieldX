@@ -48,8 +48,8 @@ RUN mkdir -p /app/log /log /mictlanx /axo && \
     chown -R appuser:appgroup /app /app/log /log /mictlanx /axo
 
 # Healthcheck sencillo a /docs (ajusta si tienes /health)
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD \
-    python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:20000/docs')" >/dev/null 2>&1 || exit 1
+# HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD \
+    # python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:20000/docs')" >/dev/null 2>&1 || exit 1
 
 # Bajar privilegios
 USER appuser
