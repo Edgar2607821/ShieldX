@@ -186,13 +186,13 @@ Now that you can run ShieldX locally using Docker Compose, you can also automate
 To build the image locally and deploy the full stack (API + MongoDB + RabbitMQ), simply run:
 
 ```bash
-./build.sh [version]
+./build.sh [IMAGE_NAME] [IMAGE_TAG]
 ```
 
 **Example:**
 
 ```bash
-./build.sh 0.0.1a0
+./build.sh shieldx api-0.0.1a0
 ```
 
 This command will:
@@ -221,12 +221,12 @@ A dedicated GitHub Action automatically builds and pushes the Docker image to Do
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 ```
 
 **How it works:**
 
-1. When a tag is pushed (e.g. `v0.0.1a0`), the Action runs automatically.
+1. When a tag is pushed (e.g. `0.0.1a0`), the Action runs automatically.
 2. It builds the image using the repository Dockerfile.
 3. It logs in to Docker Hub using secrets.
 4. It pushes the tagged image to the public registry.
@@ -234,8 +234,8 @@ on:
 **Example:**
 
 ```bash
-git tag v0.0.1a0
-git push origin v0.0.1a0
+git tag 0.0.1a0
+git push origin 0.0.1a0
 ```
 
 The resulting image will be available at:
@@ -281,7 +281,7 @@ This will log in to Docker Hub, push the image, and log out automatically.
 
 | Action                   | Command                                        | Description                           |
 | ------------------------ | ---------------------------------------------- | ------------------------------------- |
-| 🧱 Build locally         | `./build.sh 0.0.1a0`                           | Builds and runs the stack             |
+| 🧱 Build locally         | `./build.sh shieldx api-0.0.1a0`                           | Builds and runs the stack             |
 | 🚀 Publish manually      | `./publish.sh 0.0.1a0`                         | Pushes the image to Docker Hub        |
 | 🤖 Publish automatically | `git tag v0.0.1a0 && git push origin v0.0.1a0` | Triggers GitHub Action build and push |
 

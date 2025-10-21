@@ -3,7 +3,7 @@ name: 🚀 Publish Docker image to Docker Hub
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 jobs:
   publish:
@@ -23,6 +23,7 @@ jobs:
 
       - name: 🏗️ Build and push Docker image
         run: |
+          chmod +x ./build.sh
           VERSION=${GITHUB_REF#refs/tags/}
-          docker build -t edgar821/shieldx-api:${VERSION} .
+          ./build.sh edgar821/shieldx-api ${VERSION}
           docker push edgar821/shieldx-api:${VERSION}
