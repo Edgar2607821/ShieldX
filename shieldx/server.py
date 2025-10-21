@@ -1,26 +1,24 @@
 from fastapi import FastAPI
 import shieldx.controllers as Controllers
 from shieldx.db import connect_to_mongo,close_mongo_connection, get_database
-import uvicorn
 import asyncio
 from contextlib import asynccontextmanager
 from shieldx.db.indexes import create_indexes
 from shieldx.log import Log
 from shieldx.log.logger_config import get_logger
 from fastapi.middleware.cors import CORSMiddleware
-# import LogRecord,INFO,ERROR,DEBUG,WARNING
 import time as T
 from shieldx import config
 
-SHIELDX_TITLE = config.SHIELDX_TITLE
-SHIELDX_API_PREFIX = config.SHIELDX_API_PREFIX
-SHIELDX_HOST = config.SHIELDX_HOST
-SHIELDX_PORT = config.SHIELDX_PORT
-SHIELDX_VERSION = config.SHIELDX_VERSION
-CONTACT_NAME = config.SHIELDX_CONTACT_NAME
-CONTACT_EMAIL = config.SHIELDX_CONTACT_EMAIL
+SHIELDX_TITLE               = config.SHIELDX_TITLE
+SHIELDX_API_PREFIX          = config.SHIELDX_API_PREFIX
+SHIELDX_HOST                = config.SHIELDX_HOST
+SHIELDX_PORT                = config.SHIELDX_PORT
+SHIELDX_VERSION             = config.SHIELDX_VERSION
+CONTACT_NAME                = config.SHIELDX_CONTACT_NAME
+CONTACT_EMAIL               = config.SHIELDX_CONTACT_EMAIL
 SHIELDX_MONGODB_MAX_RETRIES = config.SHIELDX_MONGODB_MAX_RETRIES
-SHIELDX_RELOAD = config.SHIELDX_RELOAD
+SHIELDX_RELOAD              = config.SHIELDX_RELOAD
 
 L =  get_logger("shieldx-server")
 
@@ -75,16 +73,14 @@ app = FastAPI(
         "email": CONTACT_EMAIL,
     })
 
-origins = [
-    "https://muyal.tamps.cinvestav.mx",
-]
+# origins = config.SHIELDX_CORS_ORIGINS
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # o ["http://localhost:5173"] si usas Vite
-    allow_credentials=True,
-    allow_methods=["*"],  # <- esto es lo importante
+    allow_origins=config.SHIELDX_CORS_ORIGINS, 
+    allow_credentials=config.SHIELDX_CORS_ALLOW_CREDENTIALS,
+    allow_methods=["*"],  
     allow_headers=["*"],
 )
 

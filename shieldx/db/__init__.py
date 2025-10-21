@@ -2,7 +2,7 @@ import os
 from motor.motor_asyncio import AsyncIOMotorClient,AsyncIOMotorCollection
 from shieldx import config
 
-SHIELDX_MONGODB_URI = config.SHIELDX_MONGODB_URI
+SHIELDX_MONGODB_URI         = config.SHIELDX_MONGODB_URI
 SHIELDX_MONGO_DATABASE_NAME = config.SHIELDX_MONGO_DATABASE_NAME
 
 # Initialize MongoClient

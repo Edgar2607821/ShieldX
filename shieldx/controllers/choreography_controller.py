@@ -14,4 +14,6 @@ async def run_choreography(graph: EnrichedGraphSpecDTO,service: ChoreographyRunS
     y la ejecuta con AXO.
     """
     results = await service.run(graph)
-    return {"status": "ok", "results": results}
+    serialized_results = {node_id: result.model_dump() for node_id, result in results.items()}
+    print(serialized_results)
+    return {"status": "ok", "results": serialized_results}
